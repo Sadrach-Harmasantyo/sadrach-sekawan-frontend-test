@@ -65,6 +65,43 @@
       "startDate": "2025-01-18",
       "endDate": "2025-01-25",
       "timestamp": "2025-01-03T08:45:21.454Z"
+    },
+    {
+      "id": "9f98",
+      "vehicle": "van",
+      "driver": "driver-2",
+      "status": "Pending",
+      "approver1": "approver-1",
+      "approver2": "approver-2",
+      "startDate": "2025-01-23",
+      "endDate": "2025-01-30",
+      "timestamp": "2025-01-03T08:59:23.104Z"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "1",
+      "model": "Car",
+      "year": "2022",
+      "available": true
+    },
+    {
+      "id": "2",
+      "model": "Van",
+      "year": "2023",
+      "available": true
+    },
+    {
+      "id": "3",
+      "model": "Truck",
+      "year": "2021",
+      "available": true
+    },
+    {
+      "id": "4",
+      "model": "Bus",
+      "year": "2020",
+      "available": true
     }
   ]
 }
