@@ -5,8 +5,7 @@ How to start VehicleMS
 ## 1. Installation
 
 ```bash
-git clone https://github.com/sekawan-sadrach/vehicle-management-system.git
-cd vehicle-management-system
+git clone https://github.com/Sadrach-Harmasantyo/sadrach-sekawan-frontend-test
 npm install
 npm run dev
 npm run server
