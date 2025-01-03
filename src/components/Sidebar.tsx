@@ -53,7 +53,7 @@ export default function Sidebar({
               <User size={20} />
 
               <span className={`ml-3 ${!isSidebarOpen && "hidden"}`}>
-                Admin
+                Profile
               </span>
             </button>
           </li>

@@ -1,7 +1,7 @@
 import { Booking } from "@/types";
 import axios from "axios";
-import React from "react";
-import { toast } from "react-toastify";
+import React, { useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 type ListBookingProps = {
   bookings: Booking[];
@@ -26,27 +26,54 @@ export default function ListBooking({
     recentBookings.filter((booking) => booking.status === status);
   }
 
-  const handleStatusChange = async (
+  const handleApproverApproval = async (
     id: string | undefined,
-    newStatus: string
+    approver: "approver1" | "approver2",
+    isApproved: boolean
   ) => {
     try {
+      const patchData =
+        approver === "approver1"
+          ? { approver1Approved: isApproved }
+          : { approver2Approved: isApproved };
+
       const response = await axios.patch(
         `http://localhost:8000/bookings/${id}`,
-        {
-          status: newStatus,
-        }
+        patchData
       );
-      toast.success("Status updated successfully!");
-      console.log("Updated booking:", response.data);
+
+      const updatedBooking = response.data;
+
+      // Jika kedua approver menyetujui, update status menjadi "Approved"
+      if (
+        updatedBooking.approver1Approved &&
+        updatedBooking.approver2Approved
+      ) {
+        await axios.patch(`http://localhost:8000/bookings/${id}`, {
+          status: "Approved",
+        });
+        toast.success("Booking approved by both approvers!");
+      } else if (
+        updatedBooking.approver1Approved ||
+        updatedBooking.approver2Approved
+      ) {
+        // Jika hanya satu approver menyetujui, update status menjadi "Pending"
+        await axios.patch(`http://localhost:8000/bookings/${id}`, {
+          status: "Pending",
+        });
+        toast.success(`Approval updated by ${approver}`);
+      }
     } catch (error) {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update status.");
+      console.error("Error updating approval:", error);
+      toast.error("Failed to update approval.");
     }
   };
 
+  useEffect(() => {}, []);
+
   return (
     <div className="overflow-x-auto">
+      <ToastContainer />
       <table className="w-full">
         <thead className="bg-gray-50">
           <tr>
@@ -85,31 +112,53 @@ export default function ListBooking({
                   {booking.driver}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {userRole === "approver" ? (
-                    <select
-                      value={booking.status}
-                      onChange={(e) =>
-                        handleStatusChange(booking.id, e.target.value)
-                      }
-                      className="border rounded p-1"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Approved">Approved</option>
-                    </select>
+                  {userRole === "approver1" ? (
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={booking.approver1Approved}
+                          onChange={(e) =>
+                            handleApproverApproval(
+                              booking.id,
+                              "approver1",
+                              e.target.checked
+                            )
+                          }
+                        />
+                        Approver 1
+                      </label>
+                    </div>
+                  ) : userRole === "approver2" ? (
+                    <div>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={booking.approver2Approved}
+                          onChange={(e) =>
+                            handleApproverApproval(
+                              booking.id,
+                              "approver2",
+                              e.target.checked
+                            )
+                          }
+                        />
+                        Approver 2
+                      </label>
+                    </div>
                   ) : (
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         booking.status === "Approved"
                           ? "bg-green-100 text-green-800"
-                          : booking.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-800"
+                          : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
                       {booking.status}
                     </span>
                   )}
                 </td>
+
                 <td className="px-6 py-4 whitespace-nowrap">
                   {new Date(booking.startDate).toLocaleDateString()}
                 </td>

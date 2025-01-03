@@ -40,7 +40,7 @@ export default function LoginPage() {
 
       const user = {
         username: "User approver 1",
-        role: "approver",
+        role: "approver1",
       };
 
       localStorage.setItem("user", JSON.stringify(user));
@@ -58,7 +58,7 @@ export default function LoginPage() {
 
       const user = {
         username: "User approver2",
-        role: "approver",
+        role: "approver2",
       };
 
       localStorage.setItem("user", JSON.stringify(user));
