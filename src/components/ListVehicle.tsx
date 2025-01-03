@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 interface Vehicle {
   id: string;
   model: string;
+  year: string;
   available: boolean;
 }
 

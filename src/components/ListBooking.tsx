@@ -1,17 +1,49 @@
 import { Booking } from "@/types";
+import axios from "axios";
 import React from "react";
+import { toast } from "react-toastify";
 
 type ListBookingProps = {
   bookings: Booking[];
   limit?: number;
+  status?: string;
+  userRole?: string;
 };
 
-export default function ListBooking({ bookings, limit }: ListBookingProps) {
+export default function ListBooking({
+  bookings,
+  limit,
+  status,
+  userRole,
+}: ListBookingProps) {
   const sortedBookings = bookings.sort(
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
 
   const recentBookings = sortedBookings.slice(0, limit);
+
+  if (status) {
+    recentBookings.filter((booking) => booking.status === status);
+  }
+
+  const handleStatusChange = async (
+    id: string | undefined,
+    newStatus: string
+  ) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:8000/bookings/${id}`,
+        {
+          status: newStatus,
+        }
+      );
+      toast.success("Status updated successfully!");
+      console.log("Updated booking:", response.data);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
 
   return (
     <div className="overflow-x-auto">
@@ -53,17 +85,30 @@ export default function ListBooking({ bookings, limit }: ListBookingProps) {
                   {booking.driver}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      booking.status === "Approved"
-                        ? "bg-green-100 text-green-800"
-                        : booking.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {booking.status}
-                  </span>
+                  {userRole === "approver" ? (
+                    <select
+                      value={booking.status}
+                      onChange={(e) =>
+                        handleStatusChange(booking.id, e.target.value)
+                      }
+                      className="border rounded p-1"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Approved">Approved</option>
+                    </select>
+                  ) : (
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        booking.status === "Approved"
+                          ? "bg-green-100 text-green-800"
+                          : booking.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {booking.status}
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {new Date(booking.startDate).toLocaleDateString()}

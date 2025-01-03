@@ -16,7 +16,6 @@ import Sidebar from "@/components/Sidebar";
 import { useRouter } from "next/navigation";
 import nookies from "nookies";
 import { parseCookies } from "nookies";
-import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import Bookings from "@/components/ListBooking";
 import { Booking } from "@/types";
@@ -39,8 +38,6 @@ const Home = () => {
     localStorage.removeItem("user");
     router.push("/login");
   };
-
-  // const [booking, setBooking] = useState<Booking>({
   //   vehicle: "",
   //   driver: "",
   //   status: "Pending",
@@ -325,48 +322,11 @@ const Home = () => {
                 <div className="p-6">
                   <h3 className="text-lg font-semibold">Approval Requests</h3>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          ID
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Vehicle
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Driver
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Date
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      <tr>
-                        <td className="px-6 py-4 whitespace-nowrap">#12345</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          Toyota Innova
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          John Doe
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                            Pending
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          2024-01-02
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <ListBooking
+                  bookings={bookings}
+                  status="Pending"
+                  userRole={user.role}
+                />
               </div>
             </div>
           )}
